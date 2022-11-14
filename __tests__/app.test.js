@@ -33,3 +33,27 @@ describe('3 - GET /api/categories', () => {
   });
 });
 
+describe('4 - GET /api/reviews', () => {
+  test('status:200, responds with an array of review objects', () => {
+    return request(app)
+      .get('/api/reviews')
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeInstanceOf(Array);
+        expect(reviews).toHaveLength(4);
+        reviews.forEach((review) => {
+          expect(review).toEqual(
+            expect.objectContaining({
+              slug: expect.any(String),
+              description: expect.any(String)
+
+
+              
+            })
+          );
+        });
+      });
+  });
+});
+
