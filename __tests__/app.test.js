@@ -12,6 +12,18 @@ afterAll(() => {
   return db.end();
 });
 
+describe('0 - wrong endpoints', () => {
+  test('status:404, responds with a route not found error', () => {
+    return request(app)
+      .get('/api/randomStuff')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Route not found');
+      });
+  });
+});
+
 describe('3 - GET /api/categories', () => {
   test('status:200, responds with an array of category objects', () => {
     return request(app)
