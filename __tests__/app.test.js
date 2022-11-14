@@ -22,12 +22,10 @@ describe('3 - GET /api/categories', () => {
         expect(categories).toBeInstanceOf(Array);
         expect(categories).toHaveLength(4);
         categories.forEach((category) => {
-          expect(category).toEqual(
-            expect.objectContaining({
-              slug: expect.any(String),
-              description: expect.any(String)
-            })
-          );
+          expect(category).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String)
+          });
         });
       });
   });
@@ -41,17 +39,20 @@ describe('4 - GET /api/reviews', () => {
       .then(({ body }) => {
         const { reviews } = body;
         expect(reviews).toBeInstanceOf(Array);
-        expect(reviews).toHaveLength(4);
+        expect(reviews).toHaveLength(13);
         reviews.forEach((review) => {
-          expect(review).toEqual(
-            expect.objectContaining({
-              slug: expect.any(String),
-              description: expect.any(String)
-
-
-              
-            })
-          );
+          expect(review).toMatchObject({
+            title: expect.any(String),
+            category: expect.any(String),
+            category: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_body: expect.any(String),
+            review_id: expect.any(Number),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          });
         });
       });
   });
