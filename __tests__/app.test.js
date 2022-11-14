@@ -52,6 +52,10 @@ describe('4 - GET /api/reviews', () => {
         const { reviews } = body;
         expect(reviews).toBeInstanceOf(Array);
         expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy('created_at', {
+          descending: true,
+          coerce: true,
+        });
         reviews.forEach((review) => {
           expect(review).toMatchObject({
             title: expect.any(String),
@@ -59,11 +63,11 @@ describe('4 - GET /api/reviews', () => {
             category: expect.any(String),
             designer: expect.any(String),
             owner: expect.any(String),
-            review_body: expect.any(String),
             review_id: expect.any(Number),
             review_img_url: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
+            comment_count: expect.any(Number)
           });
         });
       });
