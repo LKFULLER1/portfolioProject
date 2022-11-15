@@ -126,7 +126,6 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
         const { comments } = body;
         expect(comments).toBeInstanceOf(Array);
         expect(comments).toHaveLength(3);
-        console.log(comments)
         expect(comments).toBeSortedBy('created_at', {
           descending: true
         });
@@ -143,25 +142,36 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
       });
   });
 
-  test('status:404, responds with a 404 error when the review_id does not exist', () => {
-    const REVIEW_ID = 200;
+  test('status:200, responds with an empty array when review_id does not link to any comments', () => {
     return request(app)
-      .get(`/api/reviews/${REVIEW_ID}/comments`)
-      .expect(404)
+      .get('/api/reviews/1/comments')
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe('review not found!');
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(0);
       });
   });
+});
 
-  test('status:400, responds with a 400 error when the review_id is not valid (not an integer)', () => {
-    const REVIEW_ID = 'hello';
-    return request(app)
-      .get(`/api/reviews/${REVIEW_ID}/comments`)
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('invalid query!');
-      });
-  });
+test('status:404, responds with a 404 error when the review_id does not exist', () => {
+  const REVIEW_ID = 200;
+  return request(app)
+    .get(`/api/reviews/${REVIEW_ID}/comments`)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('review not found!');
+    });
+});
+
+test('status:400, responds with a 400 error when the review_id is not valid (not an integer)', () => {
+  const REVIEW_ID = 'hello';
+  return request(app)
+    .get(`/api/reviews/${REVIEW_ID}/comments`)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('invalid query!');
+    });
 });
 
 
