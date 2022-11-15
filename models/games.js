@@ -60,5 +60,17 @@ exports.insertCommentByReviewId = (newComment) => {
     })
 };
 
+exports.updateReview = (updateVotes, review_id) => {
+    return this.selectReviewById(review_id).then(() => {
+        return db.query(`UPDATE reviews SET votes = votes + ${updateVotes.inc_votes} 
+        WHERE review_id = ${review_id}
+        RETURNING *;`)
+        .then((resultOfPatch) => {
+            //console.log(resultOfPatch.rows[0])
+            return resultOfPatch.rows[0];
+        })
+    })
+};
+
 
 
