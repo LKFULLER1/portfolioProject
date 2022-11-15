@@ -118,31 +118,35 @@ describe('5. GET /api/reviews/:review_id', () => {
 });
 
 describe('6. GET /api/reviews/:review_id/comments', () => {
-  test('status:200, responds with an array of comments with the given review_id', () => {
-    const REVIEW_ID = 2;
+  test('status:200, responds with an array of comments with the review_id', () => {
     return request(app)
-      .get(`/api/reviews/${REVIEW_ID}`)
+      .get('/api/reviews/2/comments')
       .expect(200)
       .then(({ body }) => {
-        expect(body.review).toEqual({
-          review_id: REVIEW_ID,
-          title: 'Jenga',
-          designer: 'Leslie Scott',
-          owner: 'philippaclaire9',
-          review_img_url:
-            'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-          review_body: 'Fiddly fun for all the family',
-          category: 'dexterity',
-          created_at: "2021-01-18T10:01:41.251Z",
-          votes: 5
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(3);
+        console.log(comments)
+        expect(comments).toBeSortedBy('created_at', {
+          descending: true
+        });
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: 2
+          });
         });
       });
   });
 
-  test('status:404, responds with a 404 error when the review does not exist', () => {
+  test('status:404, responds with a 404 error when the review_id does not exist', () => {
     const REVIEW_ID = 200;
     return request(app)
-      .get(`/api/reviews/${REVIEW_ID}`)
+      .get(`/api/reviews/${REVIEW_ID}/comments`)
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe('review not found!');
@@ -152,7 +156,7 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
   test('status:400, responds with a 400 error when the review_id is not valid (not an integer)', () => {
     const REVIEW_ID = 'hello';
     return request(app)
-      .get(`/api/reviews/${REVIEW_ID}`)
+      .get(`/api/reviews/${REVIEW_ID}/comments`)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('invalid query!');
