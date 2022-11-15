@@ -261,5 +261,19 @@ describe('8. PATCH /api/reviews/:review_id', () => {
         });
       });
   });
+
+  test('status:404, responds with a 404 error when the review_id does not exist', () => {
+    const REVIEW_ID = 200;
+    const updateVotes = {
+      inc_votes: 5
+    };
+    return request(app)
+      .patch(`/api/reviews/${REVIEW_ID}`)
+      .send(updateVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('review not found!');
+      });
+  });
 });
 
