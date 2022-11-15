@@ -30,11 +30,22 @@ exports.selectReviews = () => {
 exports.selectReviewById = (Review_id) => {
     return db.query('SELECT * FROM Reviews WHERE Review_id = $1;', [Review_id])
         .then(data => {
-            if (data.rows.length === 0){
+            if (data.rows.length === 0) {
                 //util function to check if something exists - reject if not
                 return Promise.reject({ status: 404, msg: 'review not found!' });
             }
             return data.rows[0];
         })
 };
+
+exports.selectCommentsByReviewId = (review_id) => {
+    return this.selectReviewById(review_id).then(result => {
+        return db.query(`SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC;`, [review_id])
+            .then(data => {
+                return data.rows;
+            })
+    })
+};
+
+
 

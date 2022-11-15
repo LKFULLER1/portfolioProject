@@ -117,4 +117,60 @@ describe('5. GET /api/reviews/:review_id', () => {
   });
 });
 
+describe('6. GET /api/reviews/:review_id/comments', () => {
+  test('status:200, responds with an array of comments with the review_id', () => {
+    return request(app)
+      .get('/api/reviews/2/comments')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(3);
+        expect(comments).toBeSortedBy('created_at', {
+          descending: true
+        });
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: 2
+          });
+        });
+      });
+  });
+
+  test('status:200, responds with an empty array when review_id does not link to any comments', () => {
+    return request(app)
+      .get('/api/reviews/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toEqual([]);
+      });
+  });
+});
+
+test('status:404, responds with a 404 error when the review_id does not exist', () => {
+  const REVIEW_ID = 200;
+  return request(app)
+    .get(`/api/reviews/${REVIEW_ID}/comments`)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('review not found!');
+    });
+});
+
+test('status:400, responds with a 400 error when the review_id is not valid (not an integer)', () => {
+  const REVIEW_ID = 'hello';
+  return request(app)
+    .get(`/api/reviews/${REVIEW_ID}/comments`)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('invalid query!');
+    });
+});
+
 
