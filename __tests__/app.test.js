@@ -175,7 +175,7 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
 
 
 describe('7. POST /api/reviews/:review_id/comments', () => {
-  test.only('status:201, responds with comment newly added to the database', () => {
+  test('status:201, responds with comment newly added to the database', () => {
     const REVIEW_ID = 2;
     const newComment = {
       author: 'mallionaire',
@@ -194,6 +194,22 @@ describe('7. POST /api/reviews/:review_id/comments', () => {
       });
   });
 
+  test('status:404, responds with a 404 error when the review_id does not exist', () => {
+    const REVIEW_ID = 200;
+    const newComment = {
+      author: 'mallionaire',
+      body: 'rubbish mate, grumble!',
+      review_id: REVIEW_ID
+    };
+    return request(app)
+      .post(`/api/reviews/${REVIEW_ID}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('review not found!');
+      });
+  });
+
 
   test('status:400, responds with a 400 error when the review_id or author are not present - wrong format', () => {
     const REVIEW_ID = 2;
@@ -202,10 +218,11 @@ describe('7. POST /api/reviews/:review_id/comments', () => {
       review_id: REVIEW_ID
     };
     return request(app)
-      .get(`/api/reviews/${REVIEW_ID}/comments`)
+      .post(`/api/reviews/${REVIEW_ID}/comments`)
+      .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('review not found!');
+        expect(body.msg).toBe('invalid query!');
       })
       .then(() => {
         const newComment = {
@@ -213,8 +230,9 @@ describe('7. POST /api/reviews/:review_id/comments', () => {
           body: 'rubbish mate, grumble!',
         };
         return request(app)
-          .get(`/api/reviews/${REVIEW_ID}/comments`)
-          .expect(400)
+          .post(`/api/reviews/${REVIEW_ID}/comments`)
+          .send(newComment)
+          .expect(404)
           .then(({ body }) => {
             expect(body.msg).toBe('review not found!');
           })
