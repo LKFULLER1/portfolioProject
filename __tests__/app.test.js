@@ -117,4 +117,47 @@ describe('5. GET /api/reviews/:review_id', () => {
   });
 });
 
+describe('6. GET /api/reviews/:review_id/comments', () => {
+  test('status:200, responds with an array of comments with the given review_id', () => {
+    const REVIEW_ID = 2;
+    return request(app)
+      .get(`/api/reviews/${REVIEW_ID}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.review).toEqual({
+          review_id: REVIEW_ID,
+          title: 'Jenga',
+          designer: 'Leslie Scott',
+          owner: 'philippaclaire9',
+          review_img_url:
+            'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+          review_body: 'Fiddly fun for all the family',
+          category: 'dexterity',
+          created_at: "2021-01-18T10:01:41.251Z",
+          votes: 5
+        });
+      });
+  });
+
+  test('status:404, responds with a 404 error when the review does not exist', () => {
+    const REVIEW_ID = 200;
+    return request(app)
+      .get(`/api/reviews/${REVIEW_ID}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('review not found!');
+      });
+  });
+
+  test('status:400, responds with a 400 error when the review_id is not valid (not an integer)', () => {
+    const REVIEW_ID = 'hello';
+    return request(app)
+      .get(`/api/reviews/${REVIEW_ID}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid query!');
+      });
+  });
+});
+
 

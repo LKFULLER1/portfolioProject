@@ -39,3 +39,14 @@ exports.selectReviewById = (Review_id) => {
         })
 };
 
+exports.selectCommentsByReviewId = (review_id) => {
+    return db.query(`SELECT * FROM comments WHERE review_id = $1;`, [review_id])
+        .then(data => {
+            if (data.rows.length === 0){
+                //util function to check if something exists - reject if not
+                return Promise.reject({ status: 404, msg: 'comments not found!' });
+            }
+            return data.rows;
+        })
+};
+
