@@ -175,21 +175,50 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
 
 
 describe('7. POST /api/reviews/:review_id/comments', () => {
-  test('status:201, responds with comment newly added to the database', () => {
+  test.only('status:201, responds with comment newly added to the database', () => {
+    const REVIEW_ID = 2;
     const newComment = {
       author: 'mallionaire',
       body: 'rubbish mate, grumble!',
+      review_id: REVIEW_ID
     };
     return request(app)
-      .post('/api/reviews/2/comments')
+      .post(`/api/reviews/${REVIEW_ID}/comments`)
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
-        expect(body.comment).toEqual({
-          comment_id: 6 ,
+        expect(body.comment).toMatchObject({
+          comment_id: 7,
           ...newComment,
         });
       });
+  });
+
+
+  test('status:400, responds with a 400 error when the review_id or author are not present - wrong format', () => {
+    const REVIEW_ID = 2;
+    const newComment = {
+      body: 'rubbish mate, grumble!',
+      review_id: REVIEW_ID
+    };
+    return request(app)
+      .get(`/api/reviews/${REVIEW_ID}/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('review not found!');
+      })
+      .then(() => {
+        const newComment = {
+          author: 'mallionaire',
+          body: 'rubbish mate, grumble!',
+        };
+        return request(app)
+          .get(`/api/reviews/${REVIEW_ID}/comments`)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('review not found!');
+          })
+      })
   });
 });
 

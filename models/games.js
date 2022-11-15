@@ -47,5 +47,16 @@ exports.selectCommentsByReviewId = (review_id) => {
     })
 };
 
+exports.insertCommentByReviewId = (newComment) => {
+    return db.query(`INSERT INTO comments
+    (author, body, review_id)
+    VALUES ($1, $2, $3)
+    RETURNING *;`,
+        [newComment.author, newComment.body, newComment.review_id])
+        .then((resultOfInsert) => {
+            return resultOfInsert.rows[0];
+        })
+};
+
 
 
