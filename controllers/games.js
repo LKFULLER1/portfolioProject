@@ -17,7 +17,6 @@ const { selectCategories, selectReviews, selectReviewById } = require('../models
       res.status(200).send({ "review": review });
     })
     .catch((err) => {
-      console.log('werta')
       next(err)
     })
   };
