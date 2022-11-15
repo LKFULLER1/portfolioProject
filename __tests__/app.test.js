@@ -148,8 +148,7 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        expect(comments).toBeInstanceOf(Array);
-        expect(comments).toHaveLength(0);
+        expect(comments).toEqual([]);
       });
   });
   test('status:404, responds with a 404 error when the review_id does not exist', () => {
