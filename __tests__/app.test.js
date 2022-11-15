@@ -209,7 +209,6 @@ describe('7. POST /api/reviews/:review_id/comments', () => {
       });
   });
 
-
   test('status:400, responds with a 400 error when the review_id or author are not present - wrong format', () => {
     const REVIEW_ID = 2;
     const newComment = {
