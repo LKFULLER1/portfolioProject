@@ -66,7 +66,6 @@ exports.updateReview = (updateVotes, review_id) => {
         WHERE review_id = ${review_id}
         RETURNING *;`)
         .then((resultOfPatch) => {
-            //console.log(resultOfPatch.rows[0])
             return resultOfPatch.rows[0];
         })
     })

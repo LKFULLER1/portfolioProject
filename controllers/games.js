@@ -41,10 +41,7 @@ exports.postCommentByReviewId = (req, res, next) => {
 }
 
 exports.patchReview = (req, res, next) => {
-  //console.log(req.body)
-  //console.log(req.params.review_id)
   updateReview(req.body, req.params.review_id).then((review) => {
-    //console.log(review)
     res.status(202).send({ "review": review });
   })
   .catch((err) => {
