@@ -61,14 +61,15 @@ exports.insertCommentByReviewId = (newComment, review_id) => {
 };
 
 exports.updateReview = (updateVotes, review_id) => {
-    return this.selectReviewById(review_id).then(() => {
         return db.query(`UPDATE reviews SET votes = votes + ${updateVotes.inc_votes} 
         WHERE review_id = ${review_id}
         RETURNING *;`)
-            .then((resultOfPatch) => {
-                return resultOfPatch.rows[0];
-            })
-    })
+        .then((resultOfPatch) => {
+            if (resultOfPatch.rows.length === 0){
+                return Promise.reject({ status: 404, msg: 'review not found!' });
+            }
+            return resultOfPatch.rows[0];
+        })
 };
 
 exports.selectUsers = () => {
