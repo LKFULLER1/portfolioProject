@@ -151,26 +151,86 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
         expect(comments).toEqual([]);
       });
   });
+  test('status:404, responds with a 404 error when the review_id does not exist', () => {
+    const REVIEW_ID = 200;
+    return request(app)
+      .get(`/api/reviews/${REVIEW_ID}/comments`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('review not found!');
+      });
+  });
+
+  test('status:400, responds with a 400 error when the review_id is not valid (not an integer)', () => {
+    const REVIEW_ID = 'hello';
+    return request(app)
+      .get(`/api/reviews/${REVIEW_ID}/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid query!');
+      });
+  });
 });
 
-test('status:404, responds with a 404 error when the review_id does not exist', () => {
-  const REVIEW_ID = 200;
-  return request(app)
-    .get(`/api/reviews/${REVIEW_ID}/comments`)
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toBe('review not found!');
-    });
-});
 
-test('status:400, responds with a 400 error when the review_id is not valid (not an integer)', () => {
-  const REVIEW_ID = 'hello';
-  return request(app)
-    .get(`/api/reviews/${REVIEW_ID}/comments`)
-    .expect(400)
-    .then(({ body }) => {
-      expect(body.msg).toBe('invalid query!');
-    });
-});
+describe('7. POST /api/reviews/:review_id/comments', () => {
+  test('status:201, responds with comment newly added to the database', () => {
+    const newComment = {
+      author: 'mallionaire',
+      body: 'rubbish mate, grumble!'
+    };
+    return request(app)
+      .post(`/api/reviews/2/comments`)
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 7,
+          ...newComment,
+        });
+      });
+  });
+
+  test('status:404, responds with a 404 error when the review_id does not exist', () => {
+    const newComment = {
+      author: 'mallionaire',
+      body: 'rubbish mate, grumble!',
+    };
+    return request(app)
+      .post(`/api/reviews/200/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('review not found!');
+      });
+  });
+
+  test('status:400, responds with a 400 error when a (NOT NULL) property is not present - wrong format', () => {
+    const newComment = {
+      body: 'rubbish mate, grumble!',
+    };
+    return request(app)
+      .post(`/api/reviews/2/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid query!');
+      });
+  })
+
+  test('should respond with a 400 error when the review_id is not valid (not an integer)', () => {
+    const newComment = {
+      author: 'mallionaire',
+      body: 'rubbish mate, grumble!',
+    };
+    return request(app)
+      .post(`/api/reviews/hello/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid query!');
+      })
+  });
+})
 
 
