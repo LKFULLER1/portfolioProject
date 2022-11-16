@@ -32,7 +32,7 @@ exports.getCommentsByReviewId = (req, res, next) => {
 }
 
 exports.postCommentByReviewId = (req, res, next) => {
-  insertCommentByReviewId(req.body).then((comment) => {
+  insertCommentByReviewId(req.body, req.params.review_id).then((comment) => {
     res.status(201).send({ "comment": comment });
   })
   .catch((err) => {

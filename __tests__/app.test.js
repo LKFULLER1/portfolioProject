@@ -174,14 +174,12 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
 
 describe('7. POST /api/reviews/:review_id/comments', () => {
   test('status:201, responds with comment newly added to the database', () => {
-    const REVIEW_ID = 2;
     const newComment = {
       author: 'mallionaire',
-      body: 'rubbish mate, grumble!',
-      review_id: REVIEW_ID
+      body: 'rubbish mate, grumble!'
     };
     return request(app)
-      .post(`/api/reviews/${REVIEW_ID}/comments`)
+      .post(`/api/reviews/2/comments`)
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
@@ -193,14 +191,12 @@ describe('7. POST /api/reviews/:review_id/comments', () => {
   });
 
   test('status:404, responds with a 404 error when the review_id does not exist', () => {
-    const REVIEW_ID = 200;
     const newComment = {
       author: 'mallionaire',
       body: 'rubbish mate, grumble!',
-      review_id: REVIEW_ID
     };
     return request(app)
-      .post(`/api/reviews/${REVIEW_ID}/comments`)
+      .post(`/api/reviews/200/comments`)
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
@@ -208,34 +204,33 @@ describe('7. POST /api/reviews/:review_id/comments', () => {
       });
   });
 
-  test('status:400, responds with a 400 error when the review_id or author are not present - wrong format', () => {
-    const REVIEW_ID = 2;
+  test('status:400, responds with a 400 error when a (NOT NULL) property is not present - wrong format', () => {
     const newComment = {
       body: 'rubbish mate, grumble!',
-      review_id: REVIEW_ID
     };
     return request(app)
-      .post(`/api/reviews/${REVIEW_ID}/comments`)
+      .post(`/api/reviews/2/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid query!');
+      });
+  })
+
+  test('should respond with a 400 error when the review_id is not valid (not an integer)', () => {
+    const newComment = {
+      author: 'mallionaire',
+      body: 'rubbish mate, grumble!',
+    };
+    return request(app)
+      .post(`/api/reviews/hello/comments`)
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('invalid query!');
       })
-      .then(() => {
-        const newComment = {
-          author: 'mallionaire',
-          body: 'rubbish mate, grumble!',
-        };
-        return request(app)
-          .post(`/api/reviews/${REVIEW_ID}/comments`)
-          .send(newComment)
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe('review not found!');
-          })
-      })
   });
-});
+})
 
 describe('8. PATCH /api/reviews/:review_id', () => {
   test('status:202, responds with correctly updated review', () => {
