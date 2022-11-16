@@ -1,5 +1,6 @@
 const { selectCategories, selectReviews, selectReviewById,
-  selectCommentsByReviewId, insertCommentByReviewId, updateReview } = require('../models/games.js');
+  selectCommentsByReviewId, insertCommentByReviewId, updateReview,
+  selectUsers } = require('../models/games.js');
 
 exports.getCategories = (req, res) => {
   selectCategories().then((categories) => {
@@ -48,3 +49,9 @@ exports.patchReview = (req, res, next) => {
     next(err)
   })
 }
+
+exports.getUsers = (req, res) => {
+  selectUsers().then((users) => {
+    res.status(200).send({ "users": users });
+  });
+};
