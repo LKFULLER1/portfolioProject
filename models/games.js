@@ -28,7 +28,13 @@ exports.selectReviews = () => {
 };
 
 exports.selectReviewById = (Review_id) => {
-    return db.query('SELECT * FROM Reviews WHERE Review_id = $1;', [Review_id])
+    return db.query(`SELECT reviews.*, 
+    CAST(COUNT(*)AS int) AS comment_count 
+    FROM reviews 
+    FULL OUTER JOIN comments
+    ON reviews.review_id = comments.review_id
+    WHERE reviews.review_id = $1
+    GROUP BY reviews.review_id;`, [Review_id])
         .then(data => {
             if (data.rows.length === 0) {
                 //util function to check if something exists - reject if not
@@ -65,16 +71,11 @@ exports.updateReview = (updateVotes, review_id) => {
         return db.query(`UPDATE reviews SET votes = votes + ${updateVotes.inc_votes} 
         WHERE review_id = ${review_id}
         RETURNING *;`)
-            .then((resultOfPatch) => {
-                return resultOfPatch.rows[0];
-            })
+        .then((resultOfPatch) => {
+            return resultOfPatch.rows[0];
+        })
     })
 };
 
-exports.selectUsers = () => {
-    return db.query(`SELECT * FROM users;`)
-        .then(data => {
-            return data.rows;
-        })
-};
+
 

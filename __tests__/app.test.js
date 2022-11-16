@@ -75,7 +75,7 @@ describe('4 - GET /api/reviews', () => {
 });
 
 describe('5. GET /api/reviews/:review_id', () => {
-  test('status:200, responds with a single matching review', () => {
+  test.only('status:200, responds with a single matching review', () => {
     const REVIEW_ID = 2;
     return request(app)
       .get(`/api/reviews/${REVIEW_ID}`)
@@ -91,7 +91,8 @@ describe('5. GET /api/reviews/:review_id', () => {
           review_body: 'Fiddly fun for all the family',
           category: 'dexterity',
           created_at: "2021-01-18T10:01:41.251Z",
-          votes: 5
+          votes: 5,
+          comment_count: 3
         });
       });
   });
