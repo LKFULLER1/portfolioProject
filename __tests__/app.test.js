@@ -172,7 +172,6 @@ describe('6. GET /api/reviews/:review_id/comments', () => {
   });
 });
 
-
 describe('7. POST /api/reviews/:review_id/comments', () => {
   test('status:201, responds with comment newly added to the database', () => {
     const newComment = {
@@ -233,4 +232,70 @@ describe('7. POST /api/reviews/:review_id/comments', () => {
   });
 })
 
+describe('8. PATCH /api/reviews/:review_id', () => {
+  test('status:202, responds with correctly updated review', () => {
+    const REVIEW_ID = 3;
+    const updateVotes = {
+      inc_votes: 5
+    };
+    return request(app)
+      .patch(`/api/reviews/${REVIEW_ID}`)
+      .send(updateVotes)
+      .expect(202)
+      .then(({ body }) => {
+        expect(body.review).toMatchObject({
+          review_id: REVIEW_ID,
+          title: 'Ultimate Werewolf',
+          category: 'social deduction',
+          designer: 'Akihisa Okui',
+          owner: 'bainesface',
+          review_body: "We couldn't find the werewolf!",
+          review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+          created_at: '2021-01-18T10:01:41.251Z',
+          votes: 10
+        });
+      });
+  });
+
+  test('status:404, responds with a 404 error when the review_id does not exist', () => {
+    const REVIEW_ID = 200;
+    const updateVotes = {
+      inc_votes: 5
+    };
+    return request(app)
+      .patch(`/api/reviews/${REVIEW_ID}`)
+      .send(updateVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('review not found!');
+      });
+  });
+
+  test('status:400, responds with a 400 error when a (NOT NULL) property is not present - wrong format', () => {
+    const REVIEW_ID = 2;
+    const updateVotes = {
+    };
+    return request(app)
+      .patch(`/api/reviews/${REVIEW_ID}`)
+      .send(updateVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid query!');
+      });
+  })
+
+  test('should respond with a 400 error when the review_id is not valid (not an integer)', () => {
+    const REVIEW_ID = 'hello';
+    const updateVotes = {
+      inc_votes: 5
+    };
+    return request(app)
+    .patch(`/api/reviews/${REVIEW_ID}`)
+    .send(updateVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('invalid query!');
+    });
+  });
+});
 

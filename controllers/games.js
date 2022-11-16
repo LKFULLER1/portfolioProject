@@ -1,5 +1,5 @@
 const { selectCategories, selectReviews, selectReviewById,
-  selectCommentsByReviewId, insertCommentByReviewId } = require('../models/games.js');
+  selectCommentsByReviewId, insertCommentByReviewId, updateReview } = require('../models/games.js');
 
 exports.getCategories = (req, res) => {
   selectCategories().then((categories) => {
@@ -34,6 +34,15 @@ exports.getCommentsByReviewId = (req, res, next) => {
 exports.postCommentByReviewId = (req, res, next) => {
   insertCommentByReviewId(req.body, req.params.review_id).then((comment) => {
     res.status(201).send({ "comment": comment });
+  })
+  .catch((err) => {
+    next(err)
+  })
+}
+
+exports.patchReview = (req, res, next) => {
+  updateReview(req.body, req.params.review_id).then((review) => {
+    res.status(202).send({ "review": review });
   })
   .catch((err) => {
     next(err)
