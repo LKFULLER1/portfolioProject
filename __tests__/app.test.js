@@ -244,7 +244,7 @@ describe('8. PATCH /api/reviews/:review_id', () => {
       .expect(202)
       .then(({ body }) => {
         expect(body.review).toMatchObject({
-          review_id: 3,
+          review_id: REVIEW_ID,
           title: 'Ultimate Werewolf',
           category: 'social deduction',
           designer: 'Akihisa Okui',
@@ -269,6 +269,33 @@ describe('8. PATCH /api/reviews/:review_id', () => {
       .then(({ body }) => {
         expect(body.msg).toBe('review not found!');
       });
+  });
+
+  test('status:400, responds with a 400 error when a (NOT NULL) property is not present - wrong format', () => {
+    const REVIEW_ID = 2;
+    const updateVotes = {
+    };
+    return request(app)
+      .patch(`/api/reviews/${REVIEW_ID}`)
+      .send(updateVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid query!');
+      });
+  })
+
+  test('should respond with a 400 error when the review_id is not valid (not an integer)', () => {
+    const REVIEW_ID = 'hello';
+    const updateVotes = {
+      inc_votes: 5
+    };
+    return request(app)
+    .patch(`/api/reviews/${REVIEW_ID}`)
+    .send(updateVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('invalid query!');
+    });
   });
 });
 
