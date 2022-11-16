@@ -65,11 +65,16 @@ exports.updateReview = (updateVotes, review_id) => {
         return db.query(`UPDATE reviews SET votes = votes + ${updateVotes.inc_votes} 
         WHERE review_id = ${review_id}
         RETURNING *;`)
-        .then((resultOfPatch) => {
-            return resultOfPatch.rows[0];
-        })
+            .then((resultOfPatch) => {
+                return resultOfPatch.rows[0];
+            })
     })
 };
 
-
+exports.selectUsers = () => {
+    return db.query(`SELECT * FROM users;`)
+        .then(data => {
+            return data.rows;
+        })
+};
 
