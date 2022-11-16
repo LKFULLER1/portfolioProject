@@ -1,6 +1,14 @@
 You are now connected to database "nc_games_test" as user "srvadmin".
+<<<<<<< HEAD
  review_id |       title       |     category     |   designer   |   owner    |          review_body           |                              review_img_url                               |       created_at        | votes | comment_count 
 -----------+-------------------+------------------+--------------+------------+--------------------------------+---------------------------------------------------------------------------+-------------------------+-------+---------------
          3 | Ultimate Werewolf | social deduction | Akihisa Okui | bainesface | We couldn't find the werewolf! | https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png | 2021-01-18 10:01:41.251 |     5 |             3
 (1 row)
 
+=======
+ review_id | title | category | designer | owner | review_body | review_img_url | created_at | votes 
+-----------+-------+----------+----------+-------+-------------+----------------+------------+-------
+(0 rows)
+
+UPDATE 0
+>>>>>>> 728273f81ff44e03e7064bb2ca35b5b2702503d7
