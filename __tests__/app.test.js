@@ -94,6 +94,7 @@ describe("4 - GET /api/reviews", () => {
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
+          expect(reviews).toHaveLength(13);
           reviews.forEach((review) => {
             expect(review).toMatchObject({
               title: expect.any(String),
@@ -117,6 +118,21 @@ describe("4 - GET /api/reviews", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("invalid query!");
+        });
+    });
+
+    test("should return reviews sorted by the sort_by query (desc, by default)", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=designer")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          reviews.forEach((review) => {
+            expect(reviews).toBeSortedBy("designer", {
+              descending: true,
+              coerce: true,
+            });
+          });
         });
     });
   });

@@ -7,7 +7,7 @@ exports.selectCategories = () => {
   });
 };
 
-exports.selectReviews = (category = 'reviews.category', sort_by, order_by) => {
+exports.selectReviews = (category = "reviews.category", sort_by, order_by) => {
   console.log(category);
   console.log(sort_by);
   console.log(order_by);
@@ -21,6 +21,9 @@ exports.selectReviews = (category = 'reviews.category', sort_by, order_by) => {
   if ((!validCategories.includes(category))){
     console.log('rejecting');
     return Promise.reject({ status: 400, msg: "invalid query!" });
+  }
+  if (category !== "reviews.category"){
+    category = "'" + category + "'"
   }
 
   return db
@@ -37,7 +40,7 @@ exports.selectReviews = (category = 'reviews.category', sort_by, order_by) => {
         FROM reviews 
     FULL OUTER JOIN comments
         ON reviews.review_id = comments.review_id
-        WHERE reviews.category = '${category}' 
+        WHERE reviews.category = ${category} 
         GROUP BY reviews.review_id
         ORDER BY reviews.created_at DESC;`
     )
