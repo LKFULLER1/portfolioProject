@@ -7,25 +7,35 @@ exports.selectCategories = () => {
   });
 };
 
-exports.selectReviews = (category = "reviews.category", sort_by, order_by) => {
-  console.log(category);
-  console.log(sort_by);
-  console.log(order_by);
-  const validCategories = [
-    "euro game",
-    "social deduction",
-    "dexterity",
-    "children's game",
-    "reviews.category"
-  ];
-  if ((!validCategories.includes(category))){
-    console.log('rejecting');
-    return Promise.reject({ status: 400, msg: "invalid query!" });
-  }
-  if (category !== "reviews.category"){
-    category = "'" + category + "'"
-  }
-
+exports.selectReviews = (category = "reviews.category", sort_by = "created_at", order_by) => {
+    const validCategories = [
+        "euro game",
+        "social deduction",
+        "dexterity",
+        "children's game",
+        "reviews.category",
+    ];
+    const validSorts = [
+        "created_at",
+        "title",
+        "designer",
+        "owner",
+        "review_img_url",
+        "review_body",
+        "category",
+        "votes",
+    ];
+    if (!validCategories.includes(category) || (!validSorts.includes(sort_by))) {
+        console.log("rejecting");
+        return Promise.reject({ status: 400, msg: "invalid query!" });
+    }
+    if (category !== "reviews.category") {
+        category = "'" + category + "'";
+    }
+    console.log(category,'CATEGORY');
+    console.log(sort_by, 'SORT BY');
+    console.log(order_by, 'ORDER BY');
+    
   return db
     .query(
       `SELECT owner,
@@ -42,9 +52,10 @@ exports.selectReviews = (category = "reviews.category", sort_by, order_by) => {
         ON reviews.review_id = comments.review_id
         WHERE reviews.category = ${category} 
         GROUP BY reviews.review_id
-        ORDER BY reviews.created_at DESC;`
+        ORDER BY reviews.${sort_by} DESC;`
     )
     .then((data) => {
+        console.log('hi')
       return data.rows;
     });
 };

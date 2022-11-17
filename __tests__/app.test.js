@@ -123,16 +123,35 @@ describe("4 - GET /api/reviews", () => {
 
     test("should return reviews sorted by the sort_by query (desc, by default)", () => {
       return request(app)
-        .get("/api/reviews?sort_by=designer")
+        .get("/api/reviews?sort_by=votes")
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
-          reviews.forEach((review) => {
-            expect(reviews).toBeSortedBy("designer", {
+            expect(reviews).toBeSortedBy("votes", {
               descending: true,
               coerce: true,
             });
-          });
+        });
+    });
+
+    test('should return reviews sorted by date (created_at) by default', () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true
+            });
+        });
+    });
+
+    test("status:400, responds with a 400 error when the sort_by is not valid", () => {
+      return request(app)
+        .get(`/api/reviews?sort_by=rubbish`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid query!");
         });
     });
   });
