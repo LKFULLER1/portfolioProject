@@ -1,4 +1,4 @@
-console.log('RUNNING')
+
 const express = require('express');
 const {
   getCategories,
