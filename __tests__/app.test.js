@@ -435,3 +435,16 @@ describe("9 - GET /api/users", () => {
       });
   });
 });
+
+describe('11 - DELETE /ap/comments/comment_id', () => {
+  test.only('should delete the comment with the comment_id', () => {
+    return request(app)
+        .delete(`/api/comments/3`)
+        .expect(204)
+  });
+  test('should return 404 when an invalid comment_id is passed', () => {
+    return request(app)
+        .delete(`/api/comments/100`)
+        .expect(404)
+  });
+});
