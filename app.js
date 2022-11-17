@@ -1,3 +1,4 @@
+console.log('RUNNING')
 const express = require('express');
 const {
   getCategories,
@@ -55,5 +56,6 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   res.sendStatus(500);
 });
+
 
 module.exports = app;
