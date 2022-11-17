@@ -7,7 +7,7 @@ exports.selectCategories = () => {
   });
 };
 
-exports.selectReviews = (category = "reviews.category", sort_by = "created_at", order_by) => {
+exports.selectReviews = (category = "reviews.category", sort_by = "created_at", order_by="DESC") => {
     const validCategories = [
         "euro game",
         "social deduction",
@@ -25,16 +25,20 @@ exports.selectReviews = (category = "reviews.category", sort_by = "created_at", 
         "category",
         "votes",
     ];
-    if (!validCategories.includes(category) || (!validSorts.includes(sort_by))) {
-        console.log("rejecting");
+    const validOrders = [
+        "asc",
+        "Asc",
+        "ASC",
+        "desc",
+        "Desc",
+        "DESC"
+    ];
+    if (!validCategories.includes(category) || (!validSorts.includes(sort_by)) || (!validOrders.includes(order_by))) {
         return Promise.reject({ status: 400, msg: "invalid query!" });
     }
     if (category !== "reviews.category") {
         category = "'" + category + "'";
     }
-    console.log(category,'CATEGORY');
-    console.log(sort_by, 'SORT BY');
-    console.log(order_by, 'ORDER BY');
     
   return db
     .query(
@@ -52,10 +56,9 @@ exports.selectReviews = (category = "reviews.category", sort_by = "created_at", 
         ON reviews.review_id = comments.review_id
         WHERE reviews.category = ${category} 
         GROUP BY reviews.review_id
-        ORDER BY reviews.${sort_by} DESC;`
+        ORDER BY reviews.${sort_by} ${order_by};`
     )
     .then((data) => {
-        console.log('hi')
       return data.rows;
     });
 };

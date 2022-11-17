@@ -73,7 +73,7 @@ describe("4 - GET /api/reviews", () => {
       });
   });
 
-  describe.only("11-queries", () => {
+  describe("11-queries", () => {
     test("should return reviews of the provided category", () => {
       return request(app)
         .get("/api/reviews?category=dexterity")
@@ -149,6 +149,39 @@ describe("4 - GET /api/reviews", () => {
     test("status:400, responds with a 400 error when the sort_by is not valid", () => {
       return request(app)
         .get(`/api/reviews?sort_by=rubbish`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid query!");
+        });
+    });
+
+    test("should return reviews ordered by the order_by query", () => {
+      return request(app)
+        .get("/api/reviews?order_by=asc")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: false
+            });
+        });
+    });
+
+    test("should return reviews ordered by DESC by default", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true
+            });
+        });
+    });
+
+    test("status:400, responds with a 400 error when the order_by is not valid", () => {
+      return request(app)
+        .get(`/api/reviews?order_by=rubbish`)
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("invalid query!");
