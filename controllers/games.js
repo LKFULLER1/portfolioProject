@@ -1,6 +1,8 @@
 const { selectCategories, selectReviews, selectReviewById,
   selectCommentsByReviewId, insertCommentByReviewId, updateReview,
-  selectUsers, removeComment } = require('../models/games.js');
+  selectUsers, removeComment, readApiJson } = require('../models/games.js');
+
+  const endpoints = require('../endpoints.json');
 
 exports.getCategories = (req, res) => {
   selectCategories().then((categories) => {
@@ -70,4 +72,10 @@ exports.deleteComment = (req, res, next) => {
   .catch(err => {
     next(err);
   })
+}
+
+exports.getApiJson = (req, res) => {
+  console.log(endpoints);
+  res.status(200).send(endpoints);
+  return endpoints;
 }

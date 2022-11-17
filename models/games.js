@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 const db = require("../db/connection.js");
 const reviews = require("../db/data/test-data/reviews.js");
 

@@ -436,8 +436,8 @@ describe("9 - GET /api/users", () => {
   });
 });
 
-describe('11 - DELETE /ap/comments/comment_id', () => {
-  test.only('should delete the comment with the comment_id', () => {
+describe('12 - DELETE /ap/comments/comment_id', () => {
+  test('should delete the comment with the comment_id', () => {
     return request(app)
         .delete(`/api/comments/3`)
         .expect(204)
@@ -446,5 +446,16 @@ describe('11 - DELETE /ap/comments/comment_id', () => {
     return request(app)
         .delete(`/api/comments/100`)
         .expect(404)
+  });
+});
+
+describe.only('13 - GET /api json', () => {
+  test('should get the json that describes the endpoints available', () => {
+    return request(app)
+    .get('/api')
+    .expect(200)
+    .then(( {body} ) => {
+      expect(Object.keys(body).length).toBe(3)
+    });
   });
 });
