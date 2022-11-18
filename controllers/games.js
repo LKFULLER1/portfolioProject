@@ -8,10 +8,17 @@ exports.getCategories = (req, res) => {
   });
 };
 
-exports.getReviews = (req, res) => {
-  selectReviews().then((reviews) => {
+exports.getReviews = (req, res, next) => {
+  const category = req.query.category;
+  const sort_by = req.query.sort_by;
+  const order_by = req.query.order_by;
+
+  selectReviews(category, sort_by, order_by).then((reviews) => {
     res.status(200).send({ "reviews": reviews });
-  });
+  })
+  .catch(err => {
+    next(err)
+  })
 };
 
 exports.getReviewById = (req, res, next) => {
