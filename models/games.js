@@ -7,59 +7,63 @@ exports.selectCategories = () => {
   });
 };
 
-exports.selectReviews = (category = "reviews.category", sort_by = "created_at", order_by="DESC") => {
-    const validCategories = [
-        "euro game",
-        "social deduction",
-        "dexterity",
-        "children's game",
-        "reviews.category",
-    ];
-    const validSorts = [
-        "created_at",
-        "title",
-        "designer",
-        "owner",
-        "review_img_url",
-        "review_body",
-        "category",
-        "votes",
-    ];
-    const validOrders = [
-        "asc",
-        "Asc",
-        "ASC",
-        "desc",
-        "Desc",
-        "DESC"
-    ];
-    if (!validCategories.includes(category) || (!validSorts.includes(sort_by)) || (!validOrders.includes(order_by))) {
-        return Promise.reject({ status: 400, msg: "invalid query!" });
-    }
-    if (category !== "reviews.category") {
-        category = "'" + category + "'";
-    }
-    
+exports.selectReviews = (
+  category, sort_by = "created_at", order_by = "DESC") => {
+  const validSorts = [
+    "created_at",
+    "title",
+    "designer",
+    "owner",
+    "review_img_url",
+    "review_body",
+    "category",
+    "votes",
+  ];
+  const validOrders = ["asc", "Asc", "ASC", "desc", "Desc", "DESC"];
+
+  let queryString = `SELECT owner,
+    title, 
+    reviews.review_id,
+    category,
+    review_img_url,
+    reviews.created_at,
+    reviews.votes,
+    reviews.designer,
+    CAST(COUNT(*)AS int) AS comment_count
+    FROM reviews 
+LEFT JOIN comments
+    ON reviews.review_id = comments.review_id`;
+
+  let validCategories = [];
   return db
-    .query(
-      `SELECT owner,
-        title, 
-        reviews.review_id,
-        category,
-        review_img_url,
-        reviews.created_at,
-        reviews.votes,
-        reviews.designer,
-        CAST(COUNT(*)AS int) AS comment_count
-        FROM reviews 
-    FULL OUTER JOIN comments
-        ON reviews.review_id = comments.review_id
-        WHERE reviews.category = ${category} 
-        GROUP BY reviews.review_id
-        ORDER BY reviews.${sort_by} ${order_by};`
-    )
-    .then((data) => {
-      return data.rows;
+    .query(`SELECT slug FROM categories;`)
+    .then((result) => {
+      result.rows.forEach((resultCategory) => {
+        validCategories.push(resultCategory.slug);
+      });
+    })
+    .then(() => {
+      if (!validSorts.includes(sort_by) || !validOrders.includes(order_by)) {
+        return Promise.reject({ status: 400, msg: "invalid query!" });
+      }
+
+      if (category) {
+        if (!validCategories.includes(category)) {
+          return Promise.reject({ status: 404, msg: "invalid category!" });
+        }
+        queryString += ` WHERE reviews.category = $1 
+        GROUP BY reviews.review_id 
+        ORDER BY reviews.${sort_by} ${order_by};`;
+        return db.query(queryString, [category]).then((data) => {
+          return data.rows;
+        });
+      } else {
+        queryString += ` GROUP BY reviews.review_id 
+        ORDER BY reviews.${sort_by} ${order_by};`;
+        return db.query(queryString).then((data) => {
+          return data.rows;
+        });
+      }
     });
 };
 
@@ -77,7 +81,6 @@ exports.selectReviewById = (Review_id) => {
     )
     .then((data) => {
       if (data.rows.length === 0) {
-        //util function to check if something exists - reject if not
         return Promise.reject({ status: 404, msg: "review not found!" });
       }
       return data.rows[0];
