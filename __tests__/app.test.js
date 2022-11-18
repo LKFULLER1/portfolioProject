@@ -446,3 +446,24 @@ describe("9 - GET /api/users", () => {
       });
   });
 });
+
+describe('11 - DELETE /ap/comments/comment_id', () => {
+  test('should delete the comment with the comment_id', () => {
+    return request(app)
+        .delete(`/api/comments/3`)
+        .expect(204)
+  });
+  test('should return 404 when an invalid comment_id is passed', () => {
+    return request(app)
+        .delete(`/api/comments/100`)
+        .expect(404)
+  });
+  test('should return 404 when an invalid comment_id is passed (not an integer)', () => {
+    return request(app)
+        .delete(`/api/comments/bananas`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid query!");
+        });
+  });
+});
