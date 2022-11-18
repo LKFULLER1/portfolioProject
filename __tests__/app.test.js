@@ -115,9 +115,20 @@ describe("4 - GET /api/reviews", () => {
     test("status:400, responds with a 400 error when the category is not valid", () => {
       return request(app)
         .get(`/api/reviews?category=rubbish`)
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("invalid query!");
+          expect(body.msg).toBe("invalid category!");
+        });
+    });
+
+    //should be 200
+    test("status:200, responds with a 200 when category is valid, but there are no results found for it", () => {
+      return request(app)
+        .get(`/api/reviews?category=children's games`)
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toHaveLength(0);
         });
     });
 
