@@ -1,6 +1,7 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "serves up a json representation of all the available endpoints of the api",
+    "queries": []
   },
   "GET /api/categories": {
     "description": "serves an array of all categories",
@@ -29,6 +30,57 @@
           "votes": 5
         }
       ]
+    }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "returns the review with the passed review_id",
+    "exampleResponse": {
+      "review": 
+        {
+          "review_id": 3,
+          "title": "Jenga",
+          "designer": "Leslie Scott",
+          "owner": "philippaclaire9",
+          "review_img_url":
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          "review_body": "Fiddly fun for all the family",
+          "category": "dexterity",
+          "created_at": "2021-01-18T10:01:41.251Z",
+          "votes": 5,
+          "comment_count": 3
+        }
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves all comments linked to the given review (via review_id)",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 5,
+          "body": "Now this is a story all about how, board games turned my life upside down",
+          "review_id": 2,
+          "author": "mallionaire",
+          "votes": 13,
+          "created_at": "2021-01-18T10:24:05.410Z"
+        }
+      ]
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "Adds a new comment to the database",
+    "exampleBody": {
+      "author": "mallionaire",
+      "body": "rubbish mate, grumble!"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 7,
+       " body": "rubbish mate, grumble!",
+        "review_id": 2,
+        "author": "mallionaire",
+        "votes": 0,
+        "created_at": "2022-11-18T12:28:59.728Z"
+      }
     }
   }
 }

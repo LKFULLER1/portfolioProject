@@ -290,7 +290,7 @@ describe("6. GET /api/reviews/:review_id/comments", () => {
 });
 
 describe("7. POST /api/reviews/:review_id/comments", () => {
-  test("status:201, responds with comment newly added to the database", () => {
+  test.only("status:201, responds with comment newly added to the database", () => {
     const newComment = {
       author: "mallionaire",
       body: "rubbish mate, grumble!",
@@ -300,6 +300,7 @@ describe("7. POST /api/reviews/:review_id/comments", () => {
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
+        console.log(body)
         expect(body.comment).toMatchObject({
           comment_id: 7,
           ...newComment,
@@ -449,12 +450,13 @@ describe('12 - DELETE /ap/comments/comment_id', () => {
   });
 });
 
-describe.only('13 - GET /api json', () => {
+describe('13 - GET /api json', () => {
   test('should get the json that describes the endpoints available', () => {
     return request(app)
     .get('/api')
     .expect(200)
     .then(( {body} ) => {
+      console.log(body)
       expect(Object.keys(body).length).toBe(3)
     });
   });
